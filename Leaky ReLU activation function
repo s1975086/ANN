@@ -1,0 +1,19 @@
+#For a different activation function, leaky relu can be used instead of the sigmoid function. For that, replace the following code for the sigmoid and sigmoid_deriv
+#in the file "Neural Network" (which is the file with the most code)
+
+def relu(self,x):
+    return np.maximum(0.01*x,x)
+def relu_deriv(self, x):                          
+    deriv= np.greater(x, 0.).astype(np.float32)
+    return np.maximum(0.01,deriv)
+    
+    
+    
+#For simplicity sake, the names of the functions can be altered so that there is no need to replace every mention of these functions.For that, replace the 
+#following code for the sigmoid and sigmoid_deriv in the file "Neural Network" (which is the file with the most code)
+
+def sigmoid(self,x):
+    return np.maximum(0.01*x,x)
+def sigmoid_deriv(self, x):                          
+    deriv= np.greater(x, 0.).astype(np.float32)
+    return np.maximum(0.01,deriv)
