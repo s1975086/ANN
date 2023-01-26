@@ -5,8 +5,8 @@ np.set_printoptions(threshold=sys.maxsize)
 
 class neural:
     def __init__ (self, lrate):                                 
-        no_neuron=len(input[0])                                            #number of neurons in the hidden layer
-        no_groups_of_interest=int(round(2/3*no_neuron,0)+1)                #number of functional groups in use
+        no_groups_of_interest=len(input[0])                                #number of functional groups in use         
+        no_neuron=int(round(2/3*no_groups_of_interest,0)+1)                #number of neurons in the hidden layer
         self.weight=np.random.rand(no_neuron,no_groups_of_interest)        #weights for the first layer
         self.weight2=np.random.rand(no_neuron,)                            #weights for the second layer
         self.bias=np.random.rand(no_neuron,)                               #bias for the first layer
