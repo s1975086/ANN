@@ -1,0 +1,135 @@
+import numpy as np
+import sys
+import matplotlib.pyplot as plt
+np.set_printoptions(threshold=sys.maxsize)
+
+class neural:
+    def __init__ (self, lrate):                                 
+        no_neuron=5                                                        #number of neurons in the hidden layer
+        no_groups_of_interest=20                                           #number of functional groups in use
+        self.weight=np.random.rand(no_neuron,no_groups_of_interest)        #weights for the first layer
+        self.weight2=np.random.rand(no_neuron,)                            #weights for the second layer
+        self.bias=np.random.rand(no_neuron,)                               #bias for the first layer
+        self.bias2=np.random.random_sample()                               #bias for the second layer
+        self.lrate=lrate                                                   #learning rate
+    
+
+    def sigmoid(self,x):
+        return 1 / (1 + np.exp(-x))                                        #sigmoid function
+    
+    
+    def sigmoid_deriv(self, x):                          
+        return self.sigmoid(x) * (1 - self.sigmoid(x))                     #derivative of sigmoid function
+      
+        
+    def prediction (self, input):                                          #calculate a prediction
+        l=[]
+        for i in self.weight:
+            unit=np.dot(input,i)
+            l.append(unit)
+        result1=l+self.bias                                                #result of the hidden layer
+        result2=(np.dot(self.sigmoid(result1),self.weight2)+self.bias2)    #final result
+        return result2
+    
+
+    def grad (self, input, target):                                        #calculate gradients
+
+        l=[]
+        for i in self.weight:
+            unit=np.dot(input,i)
+            l.append(unit)
+        result1=l+self.bias                                              
+        result2=np.dot(self.sigmoid(result1),self.weight2)+self.bias2     
+
+        dr4_dr3=2*(result2-target)                                         #convention used:
+        dr3_dr2=self.weight2                                               #dy_dx --> derivative of y with respect to x
+        dr2_dr1=self.sigmoid_deriv(result1)  
+        dr3_dw2=self.sigmoid(result1)        
+        #dr3_db2=1
+        dr1_dw1=input                       
+        #dr1_db1=1
+        dr4_dr1=dr4_dr3*dr3_dr2*dr2_dr1    
+        
+        derror_dweight2=dr4_dr3*dr3_dw2                                       
+        derror_dbias2=dr4_dr3                                                 
+        derror_dweight=np.dot(np.array([dr4_dr1]).T,np.array([dr1_dw1]))        
+        derror_dbias=dr4_dr1                                             
+                                                                                                       
+        return derror_dweight, derror_dbias, derror_dweight2, derror_dbias2
+    
+    
+    def update (self, derror_dweight, derror_dbias, derror_dweight2, derror_dbias2 ):   #updating values of weights and biases
+        self.bias=self.bias-(derror_dbias*self.lrate)
+        self.weight=self.weight-(derror_dweight*self.lrate)
+        self.bias2=self.bias2-(derror_dbias2*self.lrate)
+        self.weight2=self.weight2-(derror_dweight2*self.lrate)
+
+        
+    def train (self,input,target,iterations):                           #approximates function to training values
+        cumulative_errors = []
+        for i in range(iterations):                                     #takes a random training point, and gets function               
+            random_no=np.random.randint(len(input))                     #closer to that value
+            vector=input[random_no]
+            tar=target[random_no]
+            
+            derror_dweight, derror_dbias, derror_dweight2, derror_dbias2= self.grad(vector,tar)
+            self.update(derror_dweight, derror_dbias, derror_dweight2, derror_dbias2)
+            
+            if i % 100 == 0:                                           #tracks error size over 100 iterations
+                cumulative_error = 0
+                for data_instance_index in range(len(input)):
+                    data_point = input[data_instance_index]
+                    target_point = target[data_instance_index]
+                    prediction1 = self.prediction(data_point)
+                    error = abs(prediction1 - target_point)
+                    cumulative_error = cumulative_error + error
+                cumulative_errors.append(cumulative_error/100)
+        return (cumulative_errors)                                    #returns the average error for the past 100 iterations
+
+    def show_values (self):                                           #prints weight and bias values
+        w1=self.weight
+        w2=self.weight2
+        b1=self.bias
+        b2=self.bias2
+        p1=print(f'''
+The weights of the first layer are:
+
+                {w1}
+                
+                
+                
+The weights of the second layer are:
+
+                {w2}
+                
+                
+                
+The bias of the first layer are:
+
+                {b1}
+                
+                
+                
+The bias of the second layer is:
+
+                {b2} ''')
+               
+#!!!!!start of user input!!!!!  
+input=np.array([])                 #training inputs   
+target=np.array([])                #training outputs
+learning_rate=                     #learning rate desired
+fina_prediction=np.array([])       #desired value to be predicted
+no_iterations=                     #number of iterations desired
+#!!!!!end of user input!!!!!
+
+neurals=neural(learning_rate)                              #initiate class with user learning rate 
+neural_network=neurals.train(input,target,no_iterations)   #trains the network with the data previously provided
+neurals.show_values()                                      #shows weights and biases
+print(neurals.prediction(final_prediction))                #prints a prediction for the value desired
+
+plt.plot(neural_network)                      #plots the average error over last 100 iterations every 100 iterations
+x1,x2,y1,y2 = plt.axis()  
+plt.axis((x1,x2,0,25))                        #setting desired y range
+plt.xlabel("Iterations in 100s")              
+plt.ylabel("Average error across last 100 iterations")
+plt.savefig("cumulative_error.png")
