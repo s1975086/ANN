@@ -6,11 +6,11 @@ np.set_printoptions(threshold=sys.maxsize)
 
 
 ##For inputs
-df = pd.read_excel('(paste path)',0)   #path to file, page number
+df = pd.read_excel(r'(paste path)',0)   #path to file, page number
 df.to_numpy()
 
 ##For outputs
-dg = pd.read_excel('(paste path)',1)   #path to file, page number
+dg = pd.read_excel(r'(paste path)',1)   #path to file, page number
 a=dg.to_numpy()                        
 b=len(a)
 c=[]
